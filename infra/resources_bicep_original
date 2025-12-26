@@ -1,16 +1,17 @@
+/*
 param location string
 param resourceToken string
 param tags object
 
 @description('The SKU of App Service Plan.')
-param sku string = 'F1'
+param sku string = 'P0V3'
 
 resource appServicePlan 'Microsoft.Web/serverfarms@2022-03-01' = {
   name: 'plan-${resourceToken}'
   location: location
   sku: {
     name: sku
-    tier: 'Free'
+    capacity: 1
   }
   properties: {
     reserved: false
@@ -29,7 +30,7 @@ resource webApp 'Microsoft.Web/sites@2024-04-01' = {
     siteConfig: {
       minTlsVersion: '1.2'
       http20Enabled: true
-      alwaysOn: false
+      alwaysOn: true
       windowsFxVersion: 'DOTNET|9.0'
       metadata: [
         {
@@ -49,3 +50,4 @@ resource webApp 'Microsoft.Web/sites@2024-04-01' = {
 }
 
 output WEB_URI string = 'https://${webApp.properties.defaultHostName}'
+*/

@@ -4,12 +4,21 @@ using ModelContextProtocol.Server;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Configure SqlCrudTools with connection string
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+if (!string.IsNullOrEmpty(connectionString))
+{
+    SqlCrudTools.Configure(connectionString);
+}
+
 // Add MCP server services with HTTP transport
 builder.Services.AddMcpServer()
     .WithHttpTransport()
     .WithTools<MultiplicationTool>()
     .WithTools<TemperatureConverterTool>()
-    .WithTools<WeatherTools>();
+    .WithTools<WeatherTools>()
+    .WithTools<SqlCrudTools>()
+    .WithTools<EntraDirectoryTools>();
 
 // Add CORS for HTTP transport support in browsers
 builder.Services.AddCors(options =>
