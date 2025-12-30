@@ -101,6 +101,56 @@ public class WeatherTools
         }
     }
 
+    [McpServerTool, Description("Get aviation SIGMETs (Significant Meteorological Information) for the Continental United States.")]
+    public static async Task<string> GetSigmets()
+    {
+        try
+        {
+            // Use Aviation Weather Center API for SIGMETs
+            using var awcClient = new HttpClient();
+            awcClient.DefaultRequestHeaders.Add("User-Agent", "McpServer-Weather/1.0");
+            
+            var response = await awcClient.GetAsync("https://aviationweather.gov/api/data/isigmet?format=geojson&loc=us");
+            
+            if (!response.IsSuccessStatusCode)
+            {
+                return "Unable to fetch SIGMET data from Aviation Weather Center.";
+            }
+
+            var content = await response.Content.ReadAsStringAsync();
+            var jsonElement = JsonSerializer.Deserialize<JsonElement>(content);
+            
+            if (!jsonElement.TryGetProperty("features", out var featuresElement))
+            {
+                return "No SIGMET data available.";
+            }
+
+            var sigmets = featuresElement.EnumerateArray();
+
+            if (!sigmets.Any())
+            {
+                return "No active SIGMETs for the Continental United States.";
+            }
+
+            return string.Join("\n---\n", sigmets.Select(sigmet =>
+            {
+                JsonElement properties = sigmet.GetProperty("properties");
+                return $"""
+                        SIGMET: {TryGetString(properties, "sigmetId")}
+                        FIR: {TryGetString(properties, "fir")}
+                        Valid From: {TryGetString(properties, "validTimeFrom")}
+                        Valid To: {TryGetString(properties, "validTimeTo")}
+                        Phenomenon: {TryGetString(properties, "phenom")}
+                        Raw Text: {TryGetString(properties, "rawSigmet")}
+                        """;
+            }));
+        }
+        catch (Exception ex)
+        {
+            return $"Error fetching SIGMETs: {ex.Message}";
+        }
+    }
+
     // Helper method to safely get string values from JsonElement
     private static string TryGetString(JsonElement element, string propertyName)
     {

@@ -1,3 +1,8 @@
+# Modified forked repo
+Modified to include DBTools (for SQL) as part of the tools catalog for the MCP Server. Also extended the WeatherTools.cs to incorporate additional api capabilities.
+
+This repo was used as the base repo for Chapter 5 exercises in the ISV book.
+
 # Model Context Protocol (MCP) Server - .NET Implementation
 
 This project contains a .NET web app implementation of a Model Context Protocol (MCP) server. The application is designed to be deployed to Azure App Service.

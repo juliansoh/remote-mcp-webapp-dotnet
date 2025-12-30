@@ -1,0 +1,1 @@
+SELECT sod.ProductID, p.Name as ProductName, SUM(sod.OrderQty) as TotalQuantity, SUM(sod.LineTotal) as TotalSales FROM SalesLT.SalesOrderDetail sod JOIN SalesLT.Product p ON sod.ProductID = p.ProductID GROUP BY sod.ProductID, p.Name ORDER BY TotalQuantity DESC
